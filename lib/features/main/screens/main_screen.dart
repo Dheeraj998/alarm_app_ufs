@@ -1,7 +1,9 @@
 import 'dart:developer';
 
+import 'package:alarm_app/common/widgets/common_text.dart';
 import 'package:alarm_app/core/extension/extension.dart';
 import 'package:alarm_app/features/main/controller/main_controller.dart';
+import 'package:alarm_app/utils/http_response.dart';
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -18,8 +20,17 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
-    _getCurrentLocation(context);
+    getLocationFn();
     super.initState();
+  }
+
+  getLocationFn() async {
+    await _getCurrentLocation(context);
+    if (mounted &&
+        context.mainProvider.latitude != null &&
+        context.mainProvider.longitude != null) {
+      context.mainProvider.getWeatherOfCurrentLocationApiFn();
+    }
   }
 
   @override
@@ -27,16 +38,65 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
         body: SafeArea(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(
             height: 50,
           ),
+          _weather(),
           _alarmList(),
           const SizedBox(height: 20),
           _alarmCreate()
         ],
       ),
     ));
+  }
+
+  Consumer<MainController> _weather() {
+    return Consumer<MainController>(builder: (context, main, _) {
+      return main.weatherApiResponse?.loading == true
+          ? const SizedBox(
+              height: 100,
+              child:
+                  Center(child: CommonText(text: "Fetching weather data...")))
+          : (main.weatherApiResponse?.status) != APIstatus.onSuccess
+              ? const SizedBox()
+              : Container(
+                  decoration: BoxDecoration(
+                      color: Theme.of(context).primaryColor.withOpacity(.5)),
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  height: 100,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          CommonText(
+                            text: main.weatherModel?.name ?? "",
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          CommonText(
+                            text: main.weatherModel?.weather?[0].main
+                                    .toString() ??
+                                "",
+                            fontSize: 15,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      CommonText(
+                        text:
+                            "${main.weatherModel?.main?.temp?.toString() ?? ""} F",
+                        fontSize: 15,
+                      ),
+                    ],
+                  ));
+    });
   }
 
   Consumer<MainController> _alarmCreate() {
@@ -148,6 +208,8 @@ class _MainScreenState extends State<MainScreen> {
     // Get current position
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
+
+    log("_________--->>> position  ${position.latitude}");
     context.mainProvider
         .getLatAndLong(lat: position.latitude, long: position.longitude);
   }

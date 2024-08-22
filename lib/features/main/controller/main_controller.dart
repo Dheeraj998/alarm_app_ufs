@@ -1,11 +1,17 @@
+import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:alarm/alarm.dart';
 import 'package:alarm/model/alarm_settings.dart';
 import 'package:alarm_app/features/main/models/alarm_model.dart';
+import 'package:alarm_app/features/main/models/weather_model/weather_model.dart';
+import 'package:alarm_app/utils/http_response.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:collection/collection.dart';
+import 'package:http/http.dart' as http;
 
 class MainController extends ChangeNotifier {
   List<AlarmModel> alarmsList = [];
@@ -23,6 +29,7 @@ class MainController extends ChangeNotifier {
     notifyListeners();
   }
 
+//create new alarm
   createAlarmFn({required String dateTime}) async {
     final alarmSettings = AlarmSettings(
       id: 42,
@@ -57,6 +64,8 @@ class MainController extends ChangeNotifier {
     notifyListeners();
   }
 
+  //toggle alarm status on/off
+
   editAlarmStatus({required String id}) {
     List<AlarmModel> list = alarmsList.toList();
 
@@ -72,6 +81,7 @@ class MainController extends ChangeNotifier {
     }
   }
 
+//edit alarm time
   editTimeFn({required String id, required String? time}) {
     List<AlarmModel> list = alarmsList.toList();
 
@@ -90,5 +100,37 @@ class MainController extends ChangeNotifier {
   getLatAndLong({double? lat, double? long}) {
     latitude = lat;
     longitude = long;
+  }
+
+  WeatherModel? weatherModel;
+  APIResponse? weatherApiResponse;
+  getWeatherOfCurrentLocationApiFn() async {
+    weatherApiResponse = APIResponse(data: null, loading: true);
+    notifyListeners();
+    final String url =
+        "https://api.openweathermap.org/data/2.5/weather?lat=$latitude&lon=$longitude&appid=fa24f7cce594eb12c5330c6099dc0bdb";
+    try {
+      final response = await http.get(Uri.parse(url));
+      log("response ${response.body}");
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        weatherModel = WeatherModel.fromJson(jsonDecode(response.body));
+
+        weatherApiResponse = weatherApiResponse?.copyWith(
+            loading: false, status: APIstatus.onSuccess);
+      } else {
+        log("*********** error");
+
+        weatherApiResponse = weatherApiResponse?.copyWith(
+            loading: false, status: APIstatus.onError);
+      }
+    } on SocketException {
+      weatherApiResponse = weatherApiResponse?.copyWith(
+          loading: false, status: APIstatus.onNetworkError);
+    } catch (e) {
+      weatherApiResponse = weatherApiResponse?.copyWith(
+          loading: false, status: APIstatus.onError);
+    }
+    notifyListeners();
   }
 }

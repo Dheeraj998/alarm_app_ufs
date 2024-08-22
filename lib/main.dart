@@ -4,6 +4,7 @@ import 'package:alarm_app/features/main/controller/main_controller.dart';
 import 'package:alarm_app/features/main/screens/main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
@@ -15,6 +16,7 @@ void main() async {
   ]);
   await Hive.initFlutter();
   await Alarm.init();
+  // await dotenv.load(fileName: ".env");
 
   runApp(const MyApp());
 }
