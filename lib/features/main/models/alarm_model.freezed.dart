@@ -21,7 +21,7 @@ AlarmModel _$AlarmModelFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$AlarmModel {
   String? get dateTime => throw _privateConstructorUsedError;
-  String? get id => throw _privateConstructorUsedError;
+  int? get id => throw _privateConstructorUsedError;
   bool? get isSelected => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -36,7 +36,7 @@ abstract class $AlarmModelCopyWith<$Res> {
           AlarmModel value, $Res Function(AlarmModel) then) =
       _$AlarmModelCopyWithImpl<$Res, AlarmModel>;
   @useResult
-  $Res call({String? dateTime, String? id, bool? isSelected});
+  $Res call({String? dateTime, int? id, bool? isSelected});
 }
 
 /// @nodoc
@@ -64,7 +64,7 @@ class _$AlarmModelCopyWithImpl<$Res, $Val extends AlarmModel>
       id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as int?,
       isSelected: freezed == isSelected
           ? _value.isSelected
           : isSelected // ignore: cast_nullable_to_non_nullable
@@ -81,7 +81,7 @@ abstract class _$$AlarmModelImplCopyWith<$Res>
       __$$AlarmModelImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String? dateTime, String? id, bool? isSelected});
+  $Res call({String? dateTime, int? id, bool? isSelected});
 }
 
 /// @nodoc
@@ -107,7 +107,7 @@ class __$$AlarmModelImplCopyWithImpl<$Res>
       id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String?,
+              as int?,
       isSelected: freezed == isSelected
           ? _value.isSelected
           : isSelected // ignore: cast_nullable_to_non_nullable
@@ -127,7 +127,7 @@ class _$AlarmModelImpl implements _AlarmModel {
   @override
   final String? dateTime;
   @override
-  final String? id;
+  final int? id;
   @override
   final bool? isSelected;
 
@@ -169,7 +169,7 @@ class _$AlarmModelImpl implements _AlarmModel {
 abstract class _AlarmModel implements AlarmModel {
   const factory _AlarmModel(
       {final String? dateTime,
-      final String? id,
+      final int? id,
       final bool? isSelected}) = _$AlarmModelImpl;
 
   factory _AlarmModel.fromJson(Map<String, dynamic> json) =
@@ -178,7 +178,7 @@ abstract class _AlarmModel implements AlarmModel {
   @override
   String? get dateTime;
   @override
-  String? get id;
+  int? get id;
   @override
   bool? get isSelected;
   @override

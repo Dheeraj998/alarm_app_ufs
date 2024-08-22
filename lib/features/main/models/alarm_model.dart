@@ -17,7 +17,7 @@ List<AlarmModel> listOfAlarmFromHive(String str) =>
 class AlarmModel with _$AlarmModel {
   const factory AlarmModel({
     String? dateTime,
-    String? id,
+    int? id,
     bool? isSelected,
   }) = _AlarmModel;
 

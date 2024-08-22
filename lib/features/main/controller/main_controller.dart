@@ -31,8 +31,22 @@ class MainController extends ChangeNotifier {
 
 //create new alarm
   createAlarmFn({required String dateTime}) async {
+    int id = 1;
+    List<AlarmModel> list = alarmsList.toList();
+    if (list.isEmpty) {
+      id = 1;
+    } else {
+      id = list.last.id! + 1;
+    }
+    list.add(AlarmModel(id: id, dateTime: dateTime, isSelected: true));
+
+    log("************* $list");
+    alarmsList = list;
+
+    alarmBox?.put("alarmList", listOfAlarmToJson(alarmsList));
+
     final alarmSettings = AlarmSettings(
-      id: 42,
+      id: id,
       dateTime: DateTime(
           DateTime.now().year,
           DateTime.now().month,
@@ -48,17 +62,6 @@ class MainController extends ChangeNotifier {
       notificationBody: 'This is the body',
       enableNotificationOnKill: false,
     );
-    List<AlarmModel> list = alarmsList.toList();
-
-    list.add(AlarmModel(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        dateTime: dateTime,
-        isSelected: true));
-
-    log("************* $list");
-    alarmsList = list;
-
-    alarmBox?.put("alarmList", listOfAlarmToJson(alarmsList));
     await Alarm.set(alarmSettings: alarmSettings);
 
     notifyListeners();
@@ -66,7 +69,7 @@ class MainController extends ChangeNotifier {
 
   //toggle alarm status on/off
 
-  editAlarmStatus({required String id}) {
+  editAlarmStatus({required int id}) {
     List<AlarmModel> list = alarmsList.toList();
 
     int? index = list.indexWhere((element) => element.id == id);
@@ -82,7 +85,7 @@ class MainController extends ChangeNotifier {
   }
 
 //edit alarm time
-  editTimeFn({required String id, required String? time}) {
+  editTimeFn({required int id, required String? time}) {
     List<AlarmModel> list = alarmsList.toList();
 
     int? index = list.indexWhere((element) => element.id == id);

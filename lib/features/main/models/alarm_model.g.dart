@@ -9,7 +9,7 @@ part of 'alarm_model.dart';
 _$AlarmModelImpl _$$AlarmModelImplFromJson(Map<String, dynamic> json) =>
     _$AlarmModelImpl(
       dateTime: json['dateTime'] as String?,
-      id: json['id'] as String?,
+      id: (json['id'] as num?)?.toInt(),
       isSelected: json['isSelected'] as bool?,
     );
 

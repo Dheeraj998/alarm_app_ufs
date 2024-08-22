@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:alarm/alarm.dart';
 import 'package:alarm_app/common/widgets/common_text.dart';
 import 'package:alarm_app/core/extension/extension.dart';
 import 'package:alarm_app/features/main/controller/main_controller.dart';
@@ -21,6 +22,11 @@ class _MainScreenState extends State<MainScreen> {
   @override
   void initState() {
     getLocationFn();
+
+    Alarm.ringStream.stream.listen((val) {
+      log("************ $val");
+    });
+
     super.initState();
   }
 
@@ -40,9 +46,7 @@ class _MainScreenState extends State<MainScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(
-            height: 50,
-          ),
+          const SizedBox(height: 50),
           _weather(),
           _alarmList(),
           const SizedBox(height: 20),
@@ -113,11 +117,10 @@ class _MainScreenState extends State<MainScreen> {
           // icon: Icon(Icons.add),
           textAlign: TextAlign.center,
           onChanged: (val) {
-            log("^^^^^^^^^^^^ $val");
-            context.mainProvider.createAlarmFn(dateTime: val!);
+            context.mainProvider.createAlarmFn(dateTime: val);
           },
           validator: (val) {
-            print(val);
+            // print(val);
             return null;
           },
           onSaved: (val) {},
@@ -159,7 +162,7 @@ class _MainScreenState extends State<MainScreen> {
                         initialValue: '',
                         firstDate: DateTime(2000),
                         icon: Icon(
-                          Icons.edit,
+                          Icons.edit_document,
                           color: Colors.white.withOpacity(.5),
                         ),
                         lastDate: DateTime(2100),
@@ -167,24 +170,26 @@ class _MainScreenState extends State<MainScreen> {
                         // timeHintText: "Add",
                         textAlign: TextAlign.center,
                         onChanged: (val) {
-                          log("******** printed");
                           context.mainProvider.editTimeFn(
-                              time: val, id: main.alarmsList[index].id ?? "");
+                              time: val, id: main.alarmsList[index].id ?? 0);
                         },
                         validator: (val) {
-                          print(val);
+                          // print(val);
                           return null;
                         },
                         onSaved: (val) {},
                       ),
                     ),
                   ),
-                  Text(main.alarmsList[index].dateTime ?? ""),
+                  Text(
+                    main.alarmsList[index].dateTime ?? "",
+                    style: TextStyle(fontSize: 20),
+                  ),
                   Switch(
                       value: main.alarmsList[index].isSelected ?? false,
                       onChanged: (val) {
                         context.mainProvider.editAlarmStatus(
-                            id: main.alarmsList[index]?.id ?? "");
+                            id: main.alarmsList[index].id ?? 0);
                       })
                 ],
               ));
